@@ -5,6 +5,10 @@ import { Outlet } from "react-router-dom"; // for nested routes
 
 function Entitlements() {
   return (
+     <div className="admin-home-container">
+      <div className="app-title">
+        PPA Leave Application Management System Administration Panel
+      
     <div>
       <Header />
       <div style={{ display: "flex" }}>
@@ -15,6 +19,8 @@ function Entitlements() {
         </div>
       </div>
     </div>
+</div>
+</div>
   );
 }
 
