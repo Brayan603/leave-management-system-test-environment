@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 const sidebarItems = [
   { name: "Organization", path: "/admin/entitlements/organization/add" },
-  { name: "Departments", path: "/admin/entitlements/departments" },
+  { name: "Departments", path: "/admin/entitlements/departments/add" },
   { name: "Leave Types", path: "/admin/entitlements/leavetypes" },
   { name: "Users", path: "/admin/entitlements/users" },
   { name: "Limits Roles", path: "/admin/entitlements/limits-roles" },

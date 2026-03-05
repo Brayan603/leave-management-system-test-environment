@@ -1,0 +1,45 @@
+.department-container{
+  padding:20px;
+}
+
+.department-form{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-width:400px;
+}
+
+.department-form input{
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:5px;
+}
+
+.department-form button{
+  padding:10px;
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.department-form button:hover{
+  background:#1d4ed8;
+}
+
+.department-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+
+.department-table th,
+.department-table td{
+  border:1px solid #ddd;
+  padding:10px;
+}
+
+.department-table th{
+  background:#f1f5f9;
+}

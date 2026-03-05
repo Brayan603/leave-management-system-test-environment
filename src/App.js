@@ -10,6 +10,12 @@ import OrganizationView from "./admin/modules/organizations/OrganizationView";
 import OrganizationModify from "./admin/modules/organizations/OrganizationModify";
 import OrganizationDelete from "./admin/modules/organizations/OrganizationDelete";
 
+//department pages
+import DepartmentAdd from "./admin/modules/departments/DepartmentAdd";
+import DepartmentView from "./admin/modules/departments/DepartmentView";
+import DepartmentModify from "./admin/modules/departments/DepartmentModify";
+import DepartmentDelete from "./admin/modules/departments/DepartmentDelete";
+
 function App() {
   return (
     <Router>
@@ -27,11 +33,10 @@ function App() {
           <Route path="organization/delete" element={<OrganizationDelete />} />
 
           {/* Other Entitlement Sections */}
-          <Route path="departments" element={<h3>Departments Page</h3>} />
-          <Route path="leavetypes" element={<h3>Leave Types Page</h3>} />
-          <Route path="users" element={<h3>Users Page</h3>} />
-          <Route path="limits-roles" element={<h3>Limits Roles Page</h3>} />
-          <Route path="workflows" element={<h3>Workflows Page</h3>} />
+         <Route path="departments/add" element={<DepartmentAdd />} />
+         <Route path="departments/view" element={<DepartmentView />} />
+         <Route path="departments/modify" element={<DepartmentModify />} />
+         <Route path="departments/delete" element={<DepartmentDelete />} />
 
         </Route>
       </Routes>
