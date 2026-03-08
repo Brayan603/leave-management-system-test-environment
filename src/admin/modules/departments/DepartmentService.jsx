@@ -1,22 +1,33 @@
 import axios from "axios";
 
-const API = "http://localhost:5000/api/departments";
+const API = "http://localhost:5000/api/department";
 
 /* Get all departments */
-export const getDepartments = () => axios.get(API);
+export const getDepartments = async () => {
+  const response = await axios.get(API);
+  return response.data;
+};
 
 /* Get departments by organization */
-export const getDepartmentsByOrganization = (orgId) =>
-  axios.get(`${API}/department/${orgId}`);
+export const getDepartmentsByOrganization = async (orgId) => {
+  const response = await axios.get(`${API}/organization/${orgId}`);
+  return response.data;
+};
 
 /* Add department */
-export const addDepartment = (data) =>
-  axios.post(API, data);
+export const addDepartment = async (data) => {
+  const response = await axios.post(API, data);
+  return response.data;
+};
 
 /* Update department */
-export const updateDepartment = (id, data) =>
-  axios.put(`${API}/${id}`, data);
+export const updateDepartment = async (id, data) => {
+  const response = await axios.put(`${API}/${id}`, data);
+  return response.data;
+};
 
 /* Delete department */
-export const deleteDepartment = (id) =>
-  axios.delete(`${API}/${id}`);
+export const deleteDepartment = async (id) => {
+  const response = await axios.delete(`${API}/${id}`);
+  return response.data;
+};

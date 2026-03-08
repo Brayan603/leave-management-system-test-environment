@@ -12,9 +12,9 @@ function ViewOrganizations() {
   const fetchData = async () => {
     try {
       const res = await getOrganizations();
-      setOrganizations(res.data);
+      setOrganizations(res.data || []);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching organizations:", error);
     }
   };
 
@@ -22,29 +22,28 @@ function ViewOrganizations() {
     <div className="org-container">
       <h3>View Organizations</h3>
 
-      <select className="org-dropdown">
-        <option value="">Select Organization</option>
-        {organizations.map((org) => (
-          <option key={org._id} value={org._id}>
-            {org.name}
-          </option>
-        ))}
-      </select>
-
-      <table className="org-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          {organizations.map((org) => (
-            <tr key={org._id}>
-              <td>{org.name}</td>
+      {organizations.length > 0 ? (
+        <table className="org-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Name</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {organizations.map((org) => (
+              <tr key={org._id}>
+                <td>{org.code}</td>
+                <td>{org.name}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p style={{ textAlign: "center", padding: "10px", color: "#64748b" }}>
+          No organizations added yet.
+        </p>
+      )}
     </div>
   );
 }

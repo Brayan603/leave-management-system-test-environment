@@ -1,91 +1,130 @@
-import React, { useEffect, useState } from "react";
-import { getOrganizations } from "../organizations/OrganizationService";
+import React, { useState, useEffect } from "react";
 import { getDepartmentsByOrganization } from "./DepartmentService";
-import "./Department.css";
+import { getOrganizations } from "../organizations/OrganizationService"; // adjust path if needed
 
-function DepartmentAdd() {
-
+const DepartmentSelect = () => {
   const [organizations, setOrganizations] = useState([]);
+  const [selectedOrg, setSelectedOrg] = useState("");
   const [departments, setDepartments] = useState([]);
+  const [selectedDept, setSelectedDept] = useState("");
+  const [loadingDepartments, setLoadingDepartments] = useState(false);
 
-  const [organization, setOrganization] = useState("");
-  const [department, setDepartment] = useState("");
-
+  /* Fetch organizations */
   useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        const res = await getOrganizations();
+
+        // Ensure we always set an array
+        const orgArray =
+          res?.data || res?.organizations || (Array.isArray(res) ? res : []);
+
+        setOrganizations(orgArray);
+      } catch (error) {
+        console.error("Error fetching organizations:", error);
+        setOrganizations([]);
+      }
+    };
+
     fetchOrganizations();
   }, []);
 
-  const fetchOrganizations = async () => {
-    try {
-      const res = await getOrganizations();
-      setOrganizations(res.data);
-    } catch (error) {
-      console.error(error);
+  /* Fetch departments when organization changes */
+  useEffect(() => {
+    if (!selectedOrg) {
+      setDepartments([]);
+      setSelectedDept("");
+      return;
     }
-  };
 
-  const handleOrganizationChange = async (e) => {
+    const fetchDepartments = async () => {
+      try {
+        setLoadingDepartments(true);
 
-    const orgId = e.target.value;
+        const res = await getDepartmentsByOrganization(selectedOrg);
 
-    setOrganization(orgId);
+        const deptArray =
+          res?.data || res?.departments || (Array.isArray(res) ? res : []);
 
-    try {
+        setDepartments(deptArray);
+        setSelectedDept("");
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+        setDepartments([]);
+      } finally {
+        setLoadingDepartments(false);
+      }
+    };
 
-      const res = await getDepartmentsByOrganization(orgId);
-
-      setDepartments(res.data);
-
-    } catch (error) {
-
-      console.error("Failed to fetch departments", error);
-
-    }
-  };
+    fetchDepartments();
+  }, [selectedOrg]);
 
   return (
-    <div className="department-container">
+    <div
+      style={{
+        maxWidth: "400px",
+        margin: "20px auto",
+        padding: "20px",
+        border: "1px solid #ddd",
+        borderRadius: "8px",
+      }}
+    >
+      <h2>Select Department</h2>
 
-      <h3>Select Department</h3>
+      {/* Organization Dropdown */}
+      <div style={{ marginBottom: "10px" }}>
+        <label>Organization:</label>
 
-      <form className="department-form">
-
-        {/* Organization Dropdown */}
         <select
-          value={organization}
-          onChange={handleOrganizationChange}
-          required
+          value={selectedOrg}
+          onChange={(e) => setSelectedOrg(e.target.value)}
+          style={{ width: "100%", padding: "8px", marginTop: "4px" }}
         >
           <option value="">Select Organization</option>
 
-          {organizations.map((org) => (
-            <option key={org._id} value={org._id}>
-              {org.name}
-            </option>
-          ))}
-
+          {Array.isArray(organizations) &&
+            organizations.map((org) => (
+              <option key={org._id} value={org._id}>
+                {org.name} ({org.code})
+              </option>
+            ))}
         </select>
+      </div>
 
-        {/* Department Dropdown */}
+      {/* Department Dropdown */}
+      <div style={{ marginBottom: "10px" }}>
+        <label>Department:</label>
+
         <select
-          value={department}
-          onChange={(e) => setDepartment(e.target.value)}
+          value={selectedDept}
+          onChange={(e) => setSelectedDept(e.target.value)}
+          style={{ width: "100%", padding: "8px", marginTop: "4px" }}
+          disabled={!selectedOrg || loadingDepartments}
         >
+          <option value="">
+            {loadingDepartments ? "Loading departments..." : "Select Department"}
+          </option>
 
-          <option value="">Select Department</option>
-
-          {departments.map((dept) => (
-            <option key={dept._id} value={dept._id}>
-              {dept.name}
-            </option>
-          ))}
-
+          {Array.isArray(departments) &&
+            departments.map((dept) => (
+              <option key={dept._id} value={dept._id}>
+                {dept.name}
+              </option>
+            ))}
         </select>
+      </div>
 
-      </form>
-
+      {/* Selected Department */}
+      {selectedDept && (
+        <p>
+          Selected Department:{" "}
+          <strong>
+            {departments.find((d) => d._id === selectedDept)?.name}
+          </strong>
+        </p>
+      )}
     </div>
   );
-}
+};
 
-export default DepartmentAdd;
+export default DepartmentSelect;
