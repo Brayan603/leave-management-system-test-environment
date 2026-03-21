@@ -1,49 +1,40 @@
+// DepartmentView.jsx
 import React, { useEffect, useState } from "react";
-import { getDepartments } from "./DepartmentService";
 import "./Department.css";
 
 function DepartmentView() {
-
-  const [departments, setDepartments] = useState([]);
+  const [selections, setSelections] = useState([]);
 
   useEffect(() => {
-    fetchDepartments();
+    const savedSelections = JSON.parse(localStorage.getItem("selections")) || [];
+    setSelections(savedSelections);
   }, []);
-
-  const fetchDepartments = async () => {
-    try {
-      const res = await getDepartments();
-      setDepartments(res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <div className="department-container">
-
-      <h3>Departments</h3>
-
+      <h3>Submitted Selections</h3>
       <table className="department-table">
-
         <thead>
           <tr>
             <th>#</th>
-            <th>Department Name</th>
+            <th>Organization</th>
+            <th>Code</th>
+            <th>Department</th>
+            <th>Subdepartment</th>
           </tr>
         </thead>
-
         <tbody>
-          {departments.map((dept, index) => (
-            <tr key={dept._id}>
-              <td>{index + 1}</td>
-              <td>{dept.name}</td>
+          {selections.map((s, i) => (
+            <tr key={i}>
+              <td>{i + 1}</td>
+              <td>{s.organization}</td>
+              <td>{s.organizationCode}</td>
+              <td>{s.department}</td>
+              <td>{s.subdepartment}</td>
             </tr>
           ))}
         </tbody>
-
       </table>
-
     </div>
   );
 }

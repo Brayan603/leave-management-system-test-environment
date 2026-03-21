@@ -1,0 +1,12 @@
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background: #334155;
+  color: white;
+  padding: 20px;
+}
+
+.sidebar p {
+  margin: 15px 0;
+  cursor: pointer;
+}

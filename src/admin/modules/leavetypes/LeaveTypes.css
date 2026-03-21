@@ -1,0 +1,67 @@
+/* components/leavetypes/LeaveTypes.css */
+
+.leavetype-form,
+.leavetype-view {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.leavetype-form input,
+.leavetype-form select,
+.leavetype-view input,
+.leavetype-view select {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0;
+  box-sizing: border-box;
+}
+
+.leavetype-form button,
+.leavetype-view button {
+  padding: 8px 12px;
+  margin: 4px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.leavetype-form button {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.leavetype-view button {
+  background-color: #2196f3;
+  color: #fff;
+}
+
+.success {
+  color: green;
+  margin-top: 10px;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+}
+
+.leavetype-view table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.leavetype-view th,
+.leavetype-view td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.leavetype-view th {
+  background-color: #f2f2f2;
+}
