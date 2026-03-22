@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import LeaveCard from "../components/LeaveCard";
-import { getProfile, getLeaveBalance } from "../../api/employeeApi";
+import { getProfile, getLeaveBalance } from "../api/employeeApi";
 import "../styles/dashboard.css";
 
 const EmployeeDashboard = () => {

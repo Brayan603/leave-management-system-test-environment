@@ -1,11 +1,10 @@
 // src/components/Login.jsx
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "./authApi"; // Make sure your API file is here
+import { loginUser } from "./authApi"; // your API file
 import "./login.css";
 
-const Login = () => {
+const Login = ({ setToken }) => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -23,8 +22,9 @@ const Login = () => {
     });
   };
 
-  // Redirect based on user role
+  // Redirect based on role
   const handleRedirect = (role) => {
+    if (!role) return navigate("/login"); // fallback
     switch (role) {
       case "admin":
         navigate("/admin-home");
@@ -35,6 +35,7 @@ const Login = () => {
       case "employee":
       default:
         navigate("/employee-home");
+        break;
     }
   };
 
@@ -44,15 +45,23 @@ const Login = () => {
     setError("");
 
     try {
-      const data = await loginUser(form);
+      const data = await loginUser(form); // returns { token, user }
 
-      // Save token in localStorage
+      if (!data || !data.token || !data.user) {
+        throw new Error("Invalid credentials");
+      }
+
+      // Save token & role
       localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.user.role);
+
+      if (setToken) setToken(data.token);
 
       // Redirect based on role
       handleRedirect(data.user.role);
 
     } catch (err) {
+      console.error("Login error:", err);
       setError(err.message || "Login failed");
     }
   };
@@ -61,7 +70,6 @@ const Login = () => {
     <div className="login-container">
       <form className="login-card" onSubmit={handleSubmit}>
         <h2>Login</h2>
-
         {error && <p className="error">{error}</p>}
 
         <input
@@ -72,7 +80,6 @@ const Login = () => {
           onChange={handleChange}
           required
         />
-
         <input
           type="password"
           name="password"
@@ -81,7 +88,6 @@ const Login = () => {
           onChange={handleChange}
           required
         />
-
         <button type="submit">Login</button>
       </form>
     </div>
