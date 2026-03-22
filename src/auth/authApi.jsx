@@ -1,28 +1,15 @@
-// src/api/authApi.js
+import axios from "axios";
 
-import axios from "axios";  
-
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = "https://leave-application-management-system-up1h.onrender.com/api/auth";
 
 export const loginUser = async (formData) => {
   try {
-    const response = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
-    });
+    const response = await axios.post(`${API_URL}/login`, formData);
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Login failed");
-    }
-
-    return data;
+    return response.data;
 
   } catch (error) {
-    throw error;
+    // axios error handling
+    throw error.response?.data || error;
   }
 };
