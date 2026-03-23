@@ -12,6 +12,7 @@ const modules = [
   { name: "Organization", basePath: "/admin/entitlements/organization" },
   { name: "Departments", basePath: "/admin/entitlements/departments" },
   { name: "Leave Types", basePath: "/admin/entitlements/leavetypes" },
+  { name: "Entitlements", basePath: "/admin/entitlements/entitlements" },
   { name: "Users", basePath: "/admin/entitlements/users" },
   { name: "Limits Roles", basePath: "/admin/entitlements/limits-roles" },
   { name: "Workflows", basePath: "/admin/entitlements/workflows" },

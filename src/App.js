@@ -21,9 +21,10 @@ import DepartmentAdd from "./admin/modules/departments/DepartmentAdd";
 import DepartmentView from "./admin/modules/departments/DepartmentView";
 import DepartmentModify from "./admin/modules/departments/DepartmentModify";
 import DepartmentDelete from "./admin/modules/departments/DepartmentDelete";
-//import LeaveTypesAdd from "./admin/modules/leavetypes/LeaveTypesAdd";
-//import LeaveTypesView from "./admin/modules/leavetypes/LeaveTypesView";
-//import EmployeeDashboard from "./employees/pages/EmployeeDashboard";
+import LeaveTypesAdd from "./admin/modules/leavetypes/LeaveTypesAdd";
+import LeaveTypesView from "./admin/modules/leavetypes/LeaveTypesView";
+import EntitlementAdd from "./admin/modules/entitlements/EntitlementsAdd";  
+
 
 // 🔐 Protected Route by role
 const ProtectedRoute = ({ allowedRoles, children }) => {
@@ -94,15 +95,19 @@ function App() {
             <Route path="organization/delete" element={<OrganizationDelete />} />
 
             {/* Leave Types */}
-           {/* <Route path="leavetypes/add" element={<LeaveTypesAdd />} />
+            <Route path="leavetypes/add" element={<LeaveTypesAdd />} />
             <Route path="leavetypes/view" element={<LeaveTypesView />} />
-            */} 
+            
 
             {/* Departments */}
             <Route path="departments/add" element={<DepartmentAdd />} />
             <Route path="departments/view" element={<DepartmentView />} />
             <Route path="departments/modify" element={<DepartmentModify />} />
             <Route path="departments/delete" element={<DepartmentDelete />} />
+          
+            {/* Entitlements */}
+            <Route path="entitlements/add" element={<EntitlementAdd />} />
+
           </Route>
         </Route>
 
