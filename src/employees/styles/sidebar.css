@@ -3,10 +3,28 @@
   height: 100vh;
   background: #334155;
   color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   padding: 20px;
+  box-shadow: 2px 0 6px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.sidebar p {
+.sidebar-menu p,
+.sidebar-footer p {
   margin: 15px 0;
   cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.sidebar-menu p:hover,
+.sidebar-footer p:hover {
+  background: #475569;
+}
+
+.sidebar-footer {
+  margin-top: auto;
 }
