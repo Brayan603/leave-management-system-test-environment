@@ -1,15 +1,20 @@
-// employee/components/Sidebar.jsx
-
 import React from "react";
 import "../styles/sidebar.css";
 
 const Sidebar = () => {
   return (
     <div className="sidebar">
-      <p>Dashboard</p>
-      <p>My Leaves</p>
-      <p>Apply Leave</p>
-      <p>Profile</p>
+      <div className="sidebar-menu">
+        <p>Dashboard</p>
+        <p>Apply Leave</p>
+        <p>Leave History</p>
+        <p>Leave Balance</p>
+        <p>Calendar</p>
+      </div>
+
+      <div className="sidebar-footer">
+        <p>Settings</p>
+      </div>
     </div>
   );
 };
