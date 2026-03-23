@@ -1,6 +1,6 @@
 .navbar {
   height: 60px;
-  background: "deepSkyBlue";
+  background: deepSkyBlue;
   color: white;
   display: flex;
   justify-content: space-between;

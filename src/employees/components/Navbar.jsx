@@ -1,8 +1,7 @@
 // employee/components/Navbar.jsx
 
 import React from "react";
-import "./styles/navbar.css";
-
+import "../styles/navbar.css"; // Assuming you have some basic styles for the navbar
 const Navbar = () => {
   return (
     <div className="navbar">
