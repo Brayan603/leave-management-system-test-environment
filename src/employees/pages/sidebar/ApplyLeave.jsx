@@ -1,46 +1,70 @@
-// src/employees/modules/pages/ApplyLeave.jsx
-import React, { useState, useEffect } from "react";
-import { getUserEntitlements } from "../../../admin/api/entitlementsApi";
-import axios from "axios";
+import React, { useState } from "react";
 
-const ApplyLeave = () => {
-  const userId = localStorage.getItem("userId");
-  const [leaveTypes, setLeaveTypes] = useState([]);
-  const [form, setForm] = useState({ leaveTypeId: "", startDate: "", endDate: "" });
+const ApplyLeavePage = () => {
+  const [formData, setFormData] = useState({
+    leaveType: "",
+    startDate: "",
+    endDate: "",
+    reason: "",
+  });
+  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    const fetchEntitlements = async () => {
-      const data = await getUserEntitlements(userId);
-      setLeaveTypes(data);
-    };
-    fetchEntitlements();
-  }, [userId]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    await axios.post("http://localhost:5000/api/leaves", { ...form, userId });
-    alert("Leave applied!");
-    setForm({ leaveTypeId: "", startDate: "", endDate: "" });
+    // For now, just simulate submission
+    setMessage(`Leave applied from ${formData.startDate} to ${formData.endDate} for ${formData.leaveType}`);
+    setFormData({ leaveType: "", startDate: "", endDate: "", reason: "" });
   };
 
   return (
-    <div style={{ maxWidth: 500, margin: "auto", padding: 20 }}>
+    <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto" }}>
       <h2>Apply Leave</h2>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        <select value={form.leaveTypeId} onChange={(e) => setForm({ ...form, leaveTypeId: e.target.value })} required>
+      {message && <p style={{ color: "green" }}>{message}</p>}
+
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <select name="leaveType" value={formData.leaveType} onChange={handleChange} required>
           <option value="">Select Leave Type</option>
-          {leaveTypes.map(l => (
-            <option key={l._id} value={l.leaveTypeId._id}>
-              {l.leaveTypeId.name} ({l.daysAllowed} days)
-            </option>
-          ))}
+          <option value="Annual Leave">Annual Leave</option>
+          <option value="Sick Leave">Sick Leave</option>
+          <option value="Maternity Leave">Maternity Leave</option>
+          <option value="Paternity Leave">Paternity Leave</option>
         </select>
-        <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} required />
-        <input type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} required />
-        <button type="submit">Apply</button>
+
+        <input
+          type="date"
+          name="startDate"
+          value={formData.startDate}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="date"
+          name="endDate"
+          value={formData.endDate}
+          onChange={handleChange}
+          required
+        />
+
+        <textarea
+          name="reason"
+          placeholder="Reason for leave"
+          value={formData.reason}
+          onChange={handleChange}
+          rows={4}
+        />
+
+        <button type="submit" style={{ padding: "0.7rem", backgroundColor: "#4facfe", color: "#fff", border: "none", borderRadius: "5px" }}>
+          Apply Leave
+        </button>
       </form>
     </div>
   );
 };
 
-export default ApplyLeave;
+export default ApplyLeavePage;

@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 
@@ -10,6 +9,7 @@ import AdminHome from "./admin/modules/pages/AdminHome";
 
 // Employee Pages
 import EmployeeDashboard from "./employees/pages/EmployeeDashboard";
+
 
 // Entitlements and Nested Pages
 import Entitlements from "./admin/modules/pages/Entitlements";
@@ -24,6 +24,8 @@ import DepartmentDelete from "./admin/modules/departments/DepartmentDelete";
 import LeaveTypesAdd from "./admin/modules/leavetypes/LeaveTypesAdd";
 import LeaveTypesView from "./admin/modules/leavetypes/LeaveTypesView";
 import EntitlementAdd from "./admin/modules/entitlements/EntitlementsAdd";  
+import UsersAdd from "./admin/modules/users/UsersAdd"; // ✅ Correct import
+import UsersView from "./admin/modules/users/UsersView"; // ✅ View users page
 
 
 // 🔐 Protected Route by role
@@ -97,7 +99,6 @@ function App() {
             {/* Leave Types */}
             <Route path="leavetypes/add" element={<LeaveTypesAdd />} />
             <Route path="leavetypes/view" element={<LeaveTypesView />} />
-            
 
             {/* Departments */}
             <Route path="departments/add" element={<DepartmentAdd />} />
@@ -107,6 +108,10 @@ function App() {
           
             {/* Entitlements */}
             <Route path="entitlements/add" element={<EntitlementAdd />} />
+            
+            {/* Users */}
+            <Route path="users/add" element={<UsersAdd />} /> {/* ✅ Fixed */}
+            <Route path="users/view" element={<UsersView />} /> {/* ✅ Fixed */}
 
           </Route>
         </Route>
@@ -120,6 +125,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+          {/* Employee apply leave route */}
 
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" replace />} />

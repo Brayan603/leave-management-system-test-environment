@@ -1,7 +1,6 @@
-// src/admin/modules/pages/UsersAdd.jsx
-import React, { useState } from "react";
-import { getU} from "./UserService"; // Import the createUser function from your API service
-
+import React, { useState, useEffect } from "react";
+import { createUser } from "./UsersService.jsx"; // your user API
+import axios from "axios";
 
 const UsersAdd = () => {
   const [formData, setFormData] = useState({
@@ -10,35 +9,102 @@ const UsersAdd = () => {
     email: "",
     password: "",
     role: "employee",
+    organization: "",
+    department: "",
+    subDepartment: "",
   });
 
+  const [organizations, setOrganizations] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [subDepartments, setSubDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Handle input changes
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  // Load organizations on mount
+  useEffect(() => {
+    loadOrganizations();
+  }, []);
+
+  const loadOrganizations = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/organizations", {
+        headers: { "Cache-Control": "no-cache" }, // avoid cached 304
+      });
+      if (res.data && res.data.length) setOrganizations(res.data);
+    } catch (err) {
+      console.error("Error fetching organizations:", err);
+      setMessage("Failed to load organizations.");
+    }
   };
 
-  // Handle form submission
+  // Handle input changes + dynamic dropdowns
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "organization") {
+      // reset dependent fields
+      setDepartments([]);
+      setSubDepartments([]);
+      setFormData((prev) => ({ ...prev, department: "", subDepartment: "" }));
+
+      if (!value) return;
+
+      try {
+        // Use query param for department
+        const res = await axios.get("http://localhost:5000/api/department", {
+          params: { organizationId: value },
+        });
+        setDepartments(res.data || []);
+      } catch (err) {
+        console.error("Error fetching departments:", err);
+        setMessage("Failed to load departments.");
+      }
+    }
+
+    if (name === "department") {
+      setSubDepartments([]);
+      setFormData((prev) => ({ ...prev, subDepartment: "" }));
+
+      if (!value) return;
+
+      try {
+        // Use query param for subDepartment
+        const res = await axios.get("http://localhost:5000/api/subdepartments", {
+          params: { departmentId: value },
+        });
+        setSubDepartments(res.data || []);
+      } catch (err) {
+        console.error("Error fetching subDepartments:", err);
+        setMessage("Failed to load subDepartments.");
+      }
+    }
+  };
+
+  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/users", // Replace with your API endpoint
-        formData
-      );
+      await createUser(formData);
       setMessage("User created successfully!");
+
+      // reset form
       setFormData({
         firstName: "",
         lastName: "",
         email: "",
         password: "",
         role: "employee",
+        organization: "",
+        department: "",
+        subDepartment: "",
       });
+      setDepartments([]);
+      setSubDepartments([]);
     } catch (err) {
       console.error(err);
       setMessage(err.response?.data?.message || "Error creating user.");
@@ -48,14 +114,19 @@ const UsersAdd = () => {
   };
 
   return (
-    <div className="users-add-container" style={{ maxWidth: "500px", margin: "auto", padding: "2rem" }}>
-      <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>Create New User</h2>
+    <div style={{ maxWidth: "500px", margin: "auto", padding: "2rem" }}>
+      <h2>Create New User</h2>
       {message && (
-        <div style={{ marginBottom: "1rem", color: message.includes("success") ? "green" : "red" }}>
+        <p style={{ color: message.includes("success") ? "green" : "red" }}>
           {message}
-        </div>
+        </p>
       )}
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+      >
+        {/* Basic User Info */}
         <input
           type="text"
           name="firstName"
@@ -63,7 +134,6 @@ const UsersAdd = () => {
           value={formData.firstName}
           onChange={handleChange}
           required
-          style={{ padding: "0.5rem", borderRadius: "5px", border: "1px solid #ccc" }}
         />
         <input
           type="text"
@@ -72,7 +142,6 @@ const UsersAdd = () => {
           value={formData.lastName}
           onChange={handleChange}
           required
-          style={{ padding: "0.5rem", borderRadius: "5px", border: "1px solid #ccc" }}
         />
         <input
           type="email"
@@ -81,7 +150,6 @@ const UsersAdd = () => {
           value={formData.email}
           onChange={handleChange}
           required
-          style={{ padding: "0.5rem", borderRadius: "5px", border: "1px solid #ccc" }}
         />
         <input
           type="password"
@@ -90,31 +158,62 @@ const UsersAdd = () => {
           value={formData.password}
           onChange={handleChange}
           required
-          style={{ padding: "0.5rem", borderRadius: "5px", border: "1px solid #ccc" }}
         />
-        <select
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          style={{ padding: "0.5rem", borderRadius: "5px", border: "1px solid #ccc" }}
-        >
+
+        {/* Role */}
+        <select name="role" value={formData.role} onChange={handleChange} required>
           <option value="employee">Employee</option>
           <option value="manager">Manager</option>
           <option value="admin">Admin</option>
         </select>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            padding: "0.7rem",
-            backgroundColor: "#4facfe",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
+        {/* Organization */}
+        <select
+          name="organization"
+          value={formData.organization}
+          onChange={handleChange}
+          required
         >
+          <option value="">Select Organization</option>
+          {organizations.map((org) => (
+            <option key={org._id} value={org._id}>
+              {org.name}
+            </option>
+          ))}
+        </select>
+
+        {/* Department */}
+        <select
+          name="department"
+          value={formData.department}
+          onChange={handleChange}
+          required
+          disabled={!departments.length}
+        >
+          <option value="">Select Department</option>
+          {departments.map((dep) => (
+            <option key={dep._id} value={dep._id}>
+              {dep.name}
+            </option>
+          ))}
+        </select>
+
+        {/* SubDepartment */}
+        <select
+          name="subDepartment"
+          value={formData.subDepartment}
+          onChange={handleChange}
+          disabled={!subDepartments.length}
+        >
+          <option value="">Select SubDepartment</option>
+          {subDepartments.map((sub) => (
+            <option key={sub._id} value={sub._id}>
+              {sub.name}
+            </option>
+          ))}
+        </select>
+
+        <button type="submit" disabled={loading}>
           {loading ? "Creating..." : "Create User"}
         </button>
       </form>
