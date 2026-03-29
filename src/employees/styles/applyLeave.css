@@ -1,0 +1,159 @@
+/* ===== APPLY LEAVE MODERN UI ===== */
+
+.apply-leave-container {
+  max-width: 780px;
+  width: 85%;
+  padding: 20px;
+  margin-left: 100px;
+  top:50px;
+  position: fixed;
+  font-family: "Inter", sans-serif;
+}
+
+/* Title */
+.form-title {
+  font-size: 1.9rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 24px;
+  color: #0f172a;
+}
+
+/* FORM */
+.leave-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* GRID ROW (Responsive) */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* FORM GROUP */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* LABEL */
+.leave-form label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* INPUTS */
+.leave-form input,
+.leave-form select,
+.leave-form textarea {
+  padding: 12px 14px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  font-size: 0.95rem;
+  background: #fff;
+
+  transition: all 0.25s ease;
+}
+
+/* FOCUS EFFECT */
+.leave-form input:focus,
+.leave-form select:focus,
+.leave-form textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+  outline: none;
+}
+
+/* TEXTAREA */
+.leave-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+/* READONLY INPUT (Days) */
+.leave-form input[readonly] {
+  background: #f1f5f9;
+  font-weight: 600;
+}
+
+/* FILE INPUT */
+.leave-form input[type="file"] {
+  padding: 10px;
+  background: #f8fafc;
+}
+
+/* SUBMIT BUTTON */
+.submit-btn {
+  margin-top: 10px;
+
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: white;
+
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* HOVER EFFECT */
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(59, 130, 246, 0.25);
+}
+
+/* ACTIVE CLICK */
+.submit-btn:active {
+  transform: scale(0.98);
+}
+
+.required {
+  color: #ef4444;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.optional {
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+   ========================= */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .apply-leave-container {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .form-title {
+    font-size: 1.5rem;
+  }
+
+  .submit-btn {
+    font-size: 0.95rem;
+    padding: 12px;
+  }
+}

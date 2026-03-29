@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://leave-application-management-system-up1h.onrender.com/api/auth";
+const API_URL = "http://localhost:5000/api/auth";
 
 export const loginUser = async (formData) => {
   try {

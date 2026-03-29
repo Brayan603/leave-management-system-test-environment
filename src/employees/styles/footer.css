@@ -1,0 +1,24 @@
+.footer {
+  background: #111827; /* dark neutral background */
+  color: #f9fafb;      /* light text */
+  text-align: center;
+  padding: 1rem 0;
+  font-family: "Inter", sans-serif;
+  font-size: 0.95rem;
+  border-top: 1px solid #1f2937;
+  position: fixed;     /* keeps footer at bottom */
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: -100; /* ensures it stays above other content */
+}
+
+.footer p {
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.footer p::before {
+  content: "© ";
+  color: #9ca3af; /* subtle gray accent */
+}
