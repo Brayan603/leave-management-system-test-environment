@@ -1,93 +1,66 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "../styles/leaveHistory.css";
 
-const initialData = [
-  {
-    id: 1,
-    type: "Annual Leave",
-    start: "2026-01-10",
-    end: "2026-01-15",
-    days: 6,
-    reason: "Family trip",
-    approvedBy: "HR Manager",
-    status: "Approved",
-    appliedOn: "2026-01-01",
-  },
-  {
-    id: 2,
-    type: "Sick Leave",
-    start: "2026-02-02",
-    end: "2026-02-03",
-    days: 2,
-    reason: "Fever",
-    approvedBy: "-",
-    status: "Pending",
-    appliedOn: "2026-01-28",
-  },
-  {
-    id: 3,
-    type: "Casual Leave",
-    start: "2026-01-05",
-    end: "2026-01-06",
-    days: 2,
-    reason: "Personal work",
-    approvedBy: "HR Admin",
-    status: "Rejected",
-    appliedOn: "2026-01-03",
-  },
-];
-
 const LeaveHistory = () => {
-  const [statusFilter, setStatusFilter] = useState("All");
-  const [typeFilter, setTypeFilter] = useState("All");
-  const [openMenuId, setOpenMenuId] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [filter, setFilter] = useState("all");
+  const [openMenuId, setOpenMenuId] = useState(null); // track which row menu is open
 
-  const menuRef = useRef(null);
-
-  // CLOSE MENU ON OUTSIDE CLICK
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setOpenMenuId(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    fetchHistory();
   }, []);
 
-  // SORT BY APPLIED DATE (latest first)
-  const sortedData = [...initialData].sort(
-    (a, b) => new Date(b.appliedOn) - new Date(a.appliedOn)
-  );
+  const fetchHistory = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/leave/history", {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
-  // FILTER
-  const filteredData = sortedData.filter((item) => {
-    return (
-      (statusFilter === "All" || item.status === statusFilter) &&
-      (typeFilter === "All" || item.type === typeFilter)
-    );
-  });
+      let responseData = res.data;
+      if (res.data?.leaves) responseData = res.data.leaves;
+      else if (res.data?.data) responseData = res.data.data;
+
+      setHistory(Array.isArray(responseData) ? responseData : []);
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setHistory([]);
+    }
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return "-";
+    return date.toLocaleDateString("en-GB");
+  };
+
+  const filteredData =
+    filter === "all"
+      ? history
+      : history.filter(
+          (item) =>
+            (item.status || "").toLowerCase() === filter.toLowerCase()
+        );
+
+  const toggleMenu = (id) => {
+    setOpenMenuId(openMenuId === id ? null : id);
+  };
 
   return (
     <div className="history-container">
-      <h1 className="title">Leave History</h1>
+      <h2 className="title">Leave Application History</h2>
 
       {/* FILTERS */}
       <div className="filters">
-        <select onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="All">All Status</option>
-          <option value="Approved">Approved</option>
-          <option value="Rejected">Rejected</option>
-          <option value="Pending">Pending</option>
-        </select>
-
-        <select onChange={(e) => setTypeFilter(e.target.value)}>
-          <option value="All">All Types</option>
-          <option value="Annual Leave">Annual Leave</option>
-          <option value="Sick Leave">Sick Leave</option>
-          <option value="Casual Leave">Casual Leave</option>
+        <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
         </select>
       </div>
 
@@ -100,72 +73,66 @@ const LeaveHistory = () => {
             <th>End Date</th>
             <th>Days</th>
             <th>Reason</th>
-            <th>Applied On</th>
-            <th>Approved By</th>
             <th>Status</th>
+            <th>Approved By</th>
             <th>Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          {filteredData.map((item) => (
-            <tr key={item.id}>
-              <td>{item.type}</td>
-              <td>{item.start}</td>
-              <td>{item.end}</td>
-              <td>{item.days}</td>
-              <td>{item.reason}</td>
-              <td>{item.appliedOn}</td>
-              <td>{item.approvedBy}</td>
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <tr key={item.id || item._id}>
+                <td>{item.type || item.leaveType?.name || "-"}</td>
+                <td>{formatDate(item.start)}</td>
+                <td>{formatDate(item.end)}</td>
+                <td>{item.days ?? "-"}</td>
+                <td>{item.reason || "-"}</td>
+                <td className={(item.status || "").toLowerCase()}>
+                  {item.status || "Pending"}
+                </td>
+                <td>{item.approvedBy || "-"}</td>
 
-              <td className={item.status.toLowerCase()}>
-                {item.status}
-              </td>
-
-              {/* ACTION MENU */}
-              <td>
-                <div className="menu-wrapper" ref={menuRef}>
-                  <button
-                    className="dots-btn"
-                    onClick={() =>
-                      setOpenMenuId(
-                        openMenuId === item.id ? null : item.id
-                      )
-                    }
-                  >
-                    ⋮
-                  </button>
-
-                  {openMenuId === item.id && (
-                    <div className="dropdown-menu">
-                      {item.status === "Approved" && (
-                        <button className="menu-item cancel">
-                          Cancel
-                        </button>
-                      )}
-
-                      {item.status === "Rejected" && (
-                        <button className="menu-item edit">
-                          Edit
-                        </button>
-                      )}
-
-                      {item.status === "Pending" && (
-                        <>
-                          <button className="menu-item edit">
-                            Edit
-                          </button>
-                          <button className="menu-item cancel">
-                            Cancel
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </td>
+                {/* ACTION MENU */}
+                <td>
+                  <div className="action-menu">
+                    <button
+                      className="menu-button"
+                      onClick={() => toggleMenu(item.id || item._id)}
+                    >
+                      ⋮
+                    </button>
+                    {openMenuId === (item.id || item._id) && (
+                      <div className="menu-dropdown">
+                        {item.status?.toLowerCase() === "approved" && (
+                          <>
+                            <button className="btn edit">Edit</button>
+                            <button className="btn cancel">Cancel</button>
+                          </>
+                        )}
+                        {item.status?.toLowerCase() === "pending" && (
+                          <>
+                            <button className="btn edit">Edit</button>
+                            <button className="btn cancel">Cancel</button>
+                          </>
+                        )}
+                        {item.status?.toLowerCase() === "rejected" && (
+                          <>
+                            <button className="btn edit">Edit</button>
+                            <button className="btn delete">Delete</button>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="8">No leave history found</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>

@@ -1,32 +1,49 @@
-/* Base */
+/* ===========================
+   BASE LAYOUT (SIDEBAR SAFE)
+=========================== */
 .dashboard {
   padding: 20px;
-  /*background: #f1f5f9;*/
-  min-height: 100vh;
-  position: fixed;
-  top: 50px;
-  width: 85%;
+  min-height: 85vh;
+
+  width: 100%;
+  max-width: 100%;
+
+  box-sizing: border-box;
+  overflow-x: hidden;
+
+  /* IMPORTANT: keeps content inside sidebar layout */
+  display: flex;
+  flex-direction: column;
 }
 
-/* Header */
+/* ===========================
+   HEADER
+=========================== */
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
 .dashboard-header h2 {
-  margin: 10px;
+  margin: 10px 0;
   font-size: 26px;
   color: #0f172a;
-  text-align: center;
 }
 
 .dashboard-header p {
   color: #64748b;
-  margin-top: 5px;
-  text-align: center;
+  font-size: 14px;
 }
 
-/* Summary Card */
+/* ===========================
+   SUMMARY CARD (SAFE FLEX)
+=========================== */
 .summary-card {
   margin-top: 20px;
+
   background: linear-gradient(135deg, #6366f1, #3b82f6);
   color: white;
+
   padding: 25px;
   border-radius: 16px;
 
@@ -34,63 +51,96 @@
   justify-content: space-between;
   align-items: center;
 
+  flex-wrap: wrap;
+  gap: 15px;
+
+  width: 100%;
+  box-sizing: border-box;
+
   box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
 .big-number {
   font-size: 32px;
   font-weight: bold;
-  margin-top: 10px;
 }
 
 .summary-details {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  min-width: 150px;
 }
 
-/* Grid */
+/* ===========================
+   GRID (AUTO FIT SAFE)
+=========================== */
 .leave-grid {
   margin-top: 25px;
+
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
+
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Cards */
+/* ===========================
+   CARDS (RESPONSIVE SAFE)
+=========================== */
 .leave-card {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
+
   border-radius: 16px;
   padding: 20px;
 
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+
   transition: all 0.3s ease;
+
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .leave-card:hover {
   transform: translateY(-5px);
 }
 
-/* Card top */
+/* ===========================
+   CARD TOP
+=========================== */
 .card-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .card-top h4 {
   margin: 0;
   color: #1e293b;
+  font-size: 16px;
+
+  word-break: break-word;
 }
 
-/* Progress bar */
+/* ===========================
+   PROGRESS BAR
+=========================== */
 .progress-bar {
   margin-top: 15px;
   height: 8px;
+
   background: #e2e8f0;
   border-radius: 10px;
+
   overflow: hidden;
+  width: 100%;
 }
 
 .progress-fill {
@@ -98,9 +148,101 @@
   border-radius: 10px;
 }
 
-/* Footer */
-.card-footer {
-  margin-top: 12px;
-  font-size: 14px;
-  color: #475569;
+/* ===========================
+   TABLET (≤ 900px)
+=========================== */
+@media (max-width: 900px) {
+  .dashboard {
+    padding: 15px;
+  }
+
+  .dashboard-header h2 {
+    font-size: 22px;
+  }
+
+  .big-number {
+    font-size: 28px;
+  }
+
+  .leave-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+/* ===========================
+   MOBILE (≤ 768px)
+=========================== */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 12px;
+  }
+
+  .dashboard-header h2 {
+    font-size: 20px;
+  }
+
+  .dashboard-header p {
+    font-size: 13px;
+  }
+
+  .summary-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px;
+  }
+
+  .big-number {
+    font-size: 26px;
+  }
+
+  .leave-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
+
+/* ===========================
+   SMALL MOBILE (≤ 480px)
+=========================== */
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 10px;
+  }
+
+  .dashboard-header h2 {
+    font-size: 18px;
+  }
+
+  .dashboard-header p {
+    font-size: 12px;
+  }
+
+  .leave-card {
+    padding: 15px;
+  }
+
+  .big-number {
+    font-size: 22px;
+  }
+
+  .card-top h4 {
+    font-size: 14px;
+  }
+}
+
+/* ===========================
+   VERY SMALL DEVICES (≤ 360px)
+=========================== */
+@media (max-width: 360px) {
+  .dashboard {
+    padding: 8px;
+  }
+
+  .summary-card {
+    padding: 14px;
+  }
+
+  .big-number {
+    font-size: 20px;
+  }
 }

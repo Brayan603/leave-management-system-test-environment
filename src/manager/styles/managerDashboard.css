@@ -1,0 +1,94 @@
+.manager-dashboard {
+  background: #f4f6f9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-content {
+  margin-top: 80px; /* account for fixed navbar */
+  padding: 25px;
+}
+
+.dashboard-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  border-left: 4px solid #2563eb;
+  padding-left: 10px;
+}
+
+/* Table styling */
+.manager-dashboard table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.manager-dashboard th,
+.manager-dashboard td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.manager-dashboard th {
+  background: #2c3e50;
+  color: #fff;
+  font-weight: 500;
+}
+
+.manager-dashboard tr:hover {
+  background: #f9f9f9;
+}
+
+/* Status colors */
+.manager-dashboard .status.pending {
+  color: #f39c12;
+  font-weight: 600;
+}
+
+.manager-dashboard .status.approved {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.manager-dashboard .status.rejected {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+/* Action buttons */
+.manager-dashboard .approve-btn,
+.manager-dashboard .reject-btn {
+  border: none;
+  padding: 6px 12px;
+  margin-right: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+}
+
+.manager-dashboard .approve-btn {
+  background: #27ae60;
+  color: #fff;
+}
+
+.manager-dashboard .reject-btn {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.manager-dashboard .approve-btn:hover {
+  background: #219150;
+}
+
+.manager-dashboard .reject-btn:hover {
+  background: #c0392b;
+}
+

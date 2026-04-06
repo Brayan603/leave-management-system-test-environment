@@ -8,12 +8,16 @@ import Login from "./auth/Login";
 import AdminHome from "./admin/modules/pages/AdminHome";
 
 // Employee Pages
-import EmployeeDashboard from "./employees/pages/EmployeeDashboard"; // contains Sidebar + Outlet
+import EmployeeDashboard from "./employees/pages/EmployeeDashboard"; 
 import ApplyLeave from "./employees/pages/ApplyLeave";
 import LeaveHistory from "./employees/pages/LeaveHistory";
 import LeaveBalance from "./employees/pages/LeaveBalance";
 import Calendar from "./employees/pages/Calendar";
 import Settings from "./employees/pages/Settings";
+
+// Manager Pages
+import ManagerDashboard from "./manager/pages/ManagerDashboard";
+import PendingTasks from "./manager/pages/PendingTasks";
 
 // Admin Entitlements and Nested Pages
 import Entitlements from "./admin/modules/pages/Entitlements";
@@ -32,13 +36,20 @@ import UsersAdd from "./admin/modules/users/UsersAdd";
 import UsersView from "./admin/modules/users/UsersView";
 import EmployeeLayout from "./employees/components/EmployeeLayout";
 
+// 🔐 Role Redirects Map
+const roleRedirects = {
+  admin: "/admin-home",
+  employee: "/employees",
+  manager: "/manager-dashboard", // managers now go to manager namespace
+};
+
 // 🔐 Protected Route
 const ProtectedRoute = ({ allowedRoles, children }) => {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
   if (!token) return <Navigate to="/login" replace />;
-  if (!allowedRoles.includes(role)) return <Navigate to={`/${role}-home`} replace />;
+  if (!allowedRoles.includes(role)) return <Navigate to={roleRedirects[role]} replace />;
 
   return children;
 };
@@ -58,9 +69,7 @@ function App() {
           path="/"
           element={
             token
-              ? role === "admin"
-                ? <Navigate to="/admin-home" replace />
-                : <Navigate to="/employees" replace />
+              ? <Navigate to={roleRedirects[role]} replace />
               : <Navigate to="/login" replace />
           }
         />
@@ -108,7 +117,7 @@ function App() {
         <Route
           path="/employees/*"
           element={
-            <ProtectedRoute allowedRoles={["employee", "manager"]}>
+            <ProtectedRoute allowedRoles={["employee"]}>
               <EmployeeLayout /> {/* contains Sidebar + Outlet */}
             </ProtectedRoute>
           }
@@ -122,6 +131,24 @@ function App() {
           <Route path="settings" element={<Settings />} />
         </Route>
 
+        {/* ================= MANAGER ================= */}
+        <Route
+          path="/manager-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["manager"]}>
+              <ManagerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/manager/pending-tasks"
+          element={
+            <ProtectedRoute allowedRoles={["manager"]}>
+              <PendingTasks />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
@@ -130,3 +157,6 @@ function App() {
 }
 
 export default App;
+
+
+

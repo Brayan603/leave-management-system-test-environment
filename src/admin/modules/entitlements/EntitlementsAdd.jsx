@@ -30,20 +30,23 @@ const EntitlementAdd = () => {
     }
   };
 
-  // Fetch leave types
-  const fetchLeaveTypes = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/leave/leave", {
-        headers: { Authorization: `Bearer ${token}` },
-        cache: "no-store",
-      });
-      const data = await res.json();
-      setLeaveTypes(Array.isArray(data.data) ? data.data : []);
-    } catch (err) {
-      console.error("Error fetching leave types:", err);
-      setLeaveTypes([]);
-    }
-  };
+ const fetchLeaveTypes = async () => {
+  try {
+    const res = await fetch("http://localhost:5000/api/leave/leave", {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+
+    const data = await res.json();
+
+    console.log("Leave Types API Response:", data); // 🔍 DEBUG
+
+    setLeaveTypes(Array.isArray(data) ? data : data.data || []);
+  } catch (err) {
+    console.error("Error fetching leave types:", err);
+    setLeaveTypes([]);
+  }
+};
 
   // Handle multi-select
   const handleLeaveTypeChange = (e) => {

@@ -1,46 +1,99 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "../styles/dashboard.css";
 
-
+// ✅ KEEP YOUR DESIGN DATA (unchanged)
 const leaveData = [
-  {
-    title: "Sick Leave",
-    used: 5,
-    total: 10,
-    color: "#ef4444",
-  },
-  {
-    title: "Annual Leave",
-    used: 12,
-    total: 21,
-    color: "#22c55e",
-  },
-  {
-    title: "Casual Leave",
-    used: 3,
-    total: 7,
-    color: "#3b82f6",
-  },
+  { title: "Sick Leave", color: "#ef4444" },
+  { title: "Annual Leave", color: "#22c55e" },
+  { title: "Casual Leave", color: "#3b82f6" },
+  { title: "Maternity Leave", color: "#a855f7" },
+  { title: "Paternity Leave", color: "#f59e0b" },
 ];
 
 const EmployeeDashboard = () => {
-  const totalEarned = leaveData.reduce((sum, item) => sum + item.total, 0);
-  const totalUsed = leaveData.reduce((sum, item) => sum + item.used, 0);
+  const [entitlements, setEntitlements] = useState([]);
+
+  useEffect(() => {
+    fetchEntitlements();
+  }, []);
+
+  // ============================
+  // ✅ FETCH USER ENTITLEMENTS
+  // ============================
+  const fetchEntitlements = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/leave/my-leave-types",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      setEntitlements(res.data || []);
+    } catch (err) {
+      console.error("Error fetching entitlements:", err);
+      setEntitlements([]);
+    }
+  };
+
+  // ============================
+  // ✅ MERGE STATIC + API DATA
+  // ============================
+  const mergedData = leaveData.map((leave) => {
+    const match = entitlements.find(
+      (e) => e.leaveType?.name === leave.title
+    );
+
+    if (!match) {
+      return {
+        ...leave,
+        notEntitled: true,
+        used: 0,
+        total: 0,
+      };
+    }
+
+    return {
+      ...leave,
+      notEntitled: false,
+      used: match.usedDays || 0,
+      total: match.totalDays || 0,
+    };
+  });
+
+  // ============================
+  // ✅ SUMMARY CALCULATIONS
+  // ============================
+  const totalEarned = mergedData.reduce(
+    (sum, item) => sum + (item.total || 0),
+    0
+  );
+
+  const totalUsed = mergedData.reduce(
+    (sum, item) => sum + (item.used || 0),
+    0
+  );
+
+  const totalBalance = totalEarned - totalUsed;
 
   return (
     <div className="dashboard">
 
-      {/* Header */}
+      {/* HEADER */}
       <div className="dashboard-header">
-        <h2>Welcome Back 👋</h2>
+        <p>Welcome Back,</p>
+        <h2>Brayan Malova 👋</h2>
         <p>Your leave summary overview</p>
       </div>
 
-      {/* Summary Card */}
+      {/* SUMMARY CARD */}
       <div className="summary-card">
-        <div>
+        <div className="summary-left">
           <h3>Total Leave Balance</h3>
-          <p className="big-number">{totalEarned - totalUsed} Days</p>
+          <p className="big-number">{totalBalance} Days</p>
         </div>
 
         <div className="summary-details">
@@ -49,31 +102,52 @@ const EmployeeDashboard = () => {
         </div>
       </div>
 
-      {/* Leave Cards */}
+      {/* LEAVE GRID */}
       <div className="leave-grid">
-        {leaveData.map((leave) => {
-          const percent = (leave.used / leave.total) * 100;
+        {mergedData.map((leave) => {
+          const percent =
+            leave.total > 0 ? (leave.used / leave.total) * 100 : 0;
+
+          const remaining = leave.total - leave.used;
 
           return (
             <div className="leave-card" key={leave.title}>
+              
+              {/* TOP SECTION */}
               <div className="card-top">
                 <h4>{leave.title}</h4>
-                <span>{leave.used}/{leave.total}</span>
+
+                {leave.notEntitled ? (
+                  <span style={{ color: "red", fontWeight: "bold" }}>
+                    Not Entitled
+                  </span>
+                ) : (
+                  <span>
+                    {leave.used}/{leave.total}
+                  </span>
+                )}
               </div>
 
-              {/* Progress bar */}
+              {/* PROGRESS BAR */}
               <div className="progress-bar">
                 <div
                   className="progress-fill"
                   style={{
-                    width: `${percent}%`,
-                    background: leave.color,
+                    width: leave.notEntitled ? "0%" : `${percent}%`,
+                    backgroundColor: leave.color,
                   }}
-                ></div>
+                />
               </div>
 
+              {/* FOOTER */}
               <div className="card-footer">
-                <span>{leave.total - leave.used} Days Left</span>
+                {leave.notEntitled ? (
+                  <span style={{ color: "red" }}>
+                    No access to this leave
+                  </span>
+                ) : (
+                  <span>{remaining} Days Left</span>
+                )}
               </div>
             </div>
           );

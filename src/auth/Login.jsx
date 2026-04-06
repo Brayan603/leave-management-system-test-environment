@@ -30,7 +30,7 @@ const Login = ({ setToken }) => {
         navigate("/admin-home");
         break;
       case "manager":
-        navigate("/manager-home");
+        navigate("/manager-dashboard");
         break;
       case "employee":
       default:

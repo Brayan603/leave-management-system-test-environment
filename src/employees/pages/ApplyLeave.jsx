@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import FeedbackModal from "../components/FeedbackModal"; // ✅ ADDED
+import FeedbackModal from "../components/FeedbackModal";
 import "../styles/applyLeave.css";
 
 const ApplyLeave = () => {
@@ -8,7 +8,6 @@ const ApplyLeave = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // ✅ ADDED MODAL STATE
   const [modal, setModal] = useState({
     show: false,
     type: "success",
@@ -21,28 +20,26 @@ const ApplyLeave = () => {
     end: "",
     days: 0,
     reason: "",
-    description: "",
     attachment: null,
   });
 
+  // =========================
+  // FETCH ENTITLED LEAVE TYPES
+  // =========================
   useEffect(() => {
     const fetchLeaveTypes = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/leave/leave"
+          "http://localhost:5000/api/leave/my-leave-types",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
         );
 
-        console.log("Leave Types:", res.data);
-
-        if (Array.isArray(res.data)) {
-          setLeaveTypes(res.data);
-        } else if (res.data.data) {
-          setLeaveTypes(res.data.data);
-        } else {
-          setLeaveTypes([]);
-        }
+        setLeaveTypes(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.error("Error fetching leave types:", err);
         setError("Failed to load leave types");
       } finally {
         setLoading(false);
@@ -52,6 +49,9 @@ const ApplyLeave = () => {
     fetchLeaveTypes();
   }, []);
 
+  // =========================
+  // HANDLE INPUT
+  // =========================
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -66,10 +66,8 @@ const ApplyLeave = () => {
     const endDate = new Date(updatedForm.end);
 
     if (updatedForm.start && updatedForm.end && endDate >= startDate) {
-      const diff =
+      updatedForm.days =
         Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
-
-      updatedForm.days = diff;
     } else {
       updatedForm.days = 0;
     }
@@ -77,6 +75,9 @@ const ApplyLeave = () => {
     setForm(updatedForm);
   };
 
+  // =========================
+  // SUBMIT (🔥 FIXED)
+  // =========================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -94,39 +95,41 @@ const ApplyLeave = () => {
       }
 
       await axios.post(
-        "http://localhost:5000/api/leave/leave",
+        "http://localhost:5000/api/leave/apply", // ✅ FIXED
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
 
-      // ✅ REPLACED ALERT WITH MODAL
+      // ✅ SUCCESS
       setModal({
         show: true,
         type: "success",
-        message: "Leave submitted successfully ✅",
+        message: "Leave applied & balance updated ✅",
       });
 
+      // 🔥 TRIGGER DASHBOARD REFRESH
+      window.dispatchEvent(new Event("leaveUpdated"));
+
+      // RESET FORM
       setForm({
         type: "",
         start: "",
         end: "",
         days: 0,
         reason: "",
-        description: "",
         attachment: null,
       });
 
     } catch (err) {
-      console.error("Submit error:", err);
-
       setModal({
         show: true,
         type: "error",
-        message: "Failed to submit leave ❌",
+        message:
+          err.response?.data?.message || "Failed to submit leave ❌",
       });
     }
   };
@@ -136,12 +139,8 @@ const ApplyLeave = () => {
       <h1 className="form-title">Apply for Leave</h1>
 
       <form className="leave-form" onSubmit={handleSubmit}>
-        {/* Leave Type */}
         <div className="form-group">
-          <label>
-            Leave Type <span className="required">*</span>
-          </label>
-
+          <label>Leave Type *</label>
           <select
             name="type"
             value={form.type}
@@ -155,86 +154,38 @@ const ApplyLeave = () => {
             ) : error ? (
               <option disabled>{error}</option>
             ) : leaveTypes.length === 0 ? (
-              <option disabled>No leave types available</option>
+              <option disabled>No entitled leaves</option>
             ) : (
-              leaveTypes.map((type, index) => (
-                <option
-                  key={type._id || index}
-                  value={type.name || type}
-                >
-                  {type.name || type}
+              leaveTypes.map((type) => (
+                <option key={type.leaveTypeId} value={type.name}>
+                  {type.name || type.leaveType?.name}
                 </option>
               ))
             )}
           </select>
         </div>
 
-        {/* Leave Duration */}
         <div className="form-group">
-          <label>
-            Leave Duration <span className="required">*</span>
-          </label>
-
+          <label>Leave Duration *</label>
           <div className="form-row">
-            <div className="form-group">
-              <label>Start Date</label>
-              <input
-                type="date"
-                name="start"
-                value={form.start}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>End Date</label>
-              <input
-                type="date"
-                name="end"
-                value={form.end}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <input type="date" name="start" value={form.start} onChange={handleChange} required />
+            <input type="date" name="end" value={form.end} onChange={handleChange} required />
           </div>
         </div>
 
-        {/* Total Days */}
         <div className="form-group">
           <label>Total Days</label>
-          <input
-            type="number"
-            name="days"
-            value={form.days}
-            readOnly
-          />
+          <input type="number" value={form.days} readOnly />
         </div>
 
-        {/* Reason */}
         <div className="form-group">
-          <label>
-            Reason <span className="required">*</span>
-          </label>
-          <textarea
-            name="reason"
-            value={form.reason}
-            onChange={handleChange}
-            placeholder="Enter reason..."
-            required
-          />
+          <label>Reason *</label>
+          <textarea name="reason" value={form.reason} onChange={handleChange} required />
         </div>
 
-        {/* Attachment */}
         <div className="form-group">
-          <label>
-            Attachment <span className="optional">(optional)</span>
-          </label>
-          <input
-            type="file"
-            name="attachment"
-            onChange={handleChange}
-          />
+          <label>Attachment</label>
+          <input type="file" name="attachment" onChange={handleChange} />
         </div>
 
         <button type="submit" className="submit-btn">
@@ -242,7 +193,6 @@ const ApplyLeave = () => {
         </button>
       </form>
 
-      {/* ✅ MODAL ADDED */}
       <FeedbackModal
         show={modal.show}
         type={modal.type}
