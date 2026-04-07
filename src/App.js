@@ -19,6 +19,9 @@ import Settings from "./employees/pages/Settings";
 import ManagerDashboard from "./manager/pages/ManagerDashboard";
 import PendingTasks from "./manager/pages/PendingTasks";
 
+// ✅ FIX: Import ManagerLayout
+import ManagerLayout from "./manager/components/ManagerLayout";
+
 // Admin Entitlements and Nested Pages
 import Entitlements from "./admin/modules/pages/Entitlements";
 import OrganizationAdd from "./admin/modules/organizations/OrganizationAdd";
@@ -36,11 +39,11 @@ import UsersAdd from "./admin/modules/users/UsersAdd";
 import UsersView from "./admin/modules/users/UsersView";
 import EmployeeLayout from "./employees/components/EmployeeLayout";
 
-// 🔐 Role Redirects Map
+// 🔐 Role Redirects Map (FIXED)
 const roleRedirects = {
   admin: "/admin-home",
   employee: "/employees",
-  manager: "/manager-dashboard", // managers now go to manager namespace
+  manager: "/manager", // ✅ FIXED
 };
 
 // 🔐 Protected Route
@@ -64,6 +67,7 @@ function App() {
   return (
     <Router>
       <Routes>
+
         {/* Default redirect */}
         <Route
           path="/"
@@ -118,12 +122,11 @@ function App() {
           path="/employees/*"
           element={
             <ProtectedRoute allowedRoles={["employee"]}>
-              <EmployeeLayout /> {/* contains Sidebar + Outlet */}
+              <EmployeeLayout />
             </ProtectedRoute>
           }
         >
-          {/* Nested Employee Pages */}
-          <Route index element={<EmployeeDashboard />} /> {/* default page */}
+          <Route index element={<EmployeeDashboard />} />
           <Route path="apply-leave" element={<ApplyLeave />} />
           <Route path="leave-history" element={<LeaveHistory />} />
           <Route path="leave-balance" element={<LeaveBalance />} />
@@ -131,26 +134,22 @@ function App() {
           <Route path="settings" element={<Settings />} />
         </Route>
 
-        {/* ================= MANAGER ================= */}
+        {/* ================= MANAGER (FIXED) ================= */}
         <Route
-          path="/manager-dashboard"
+          path="/manager/*"
           element={
             <ProtectedRoute allowedRoles={["manager"]}>
-              <ManagerDashboard />
+              <ManagerLayout />
             </ProtectedRoute>
           }
-        />
-        <Route
-          path="/manager/pending-tasks"
-          element={
-            <ProtectedRoute allowedRoles={["manager"]}>
-              <PendingTasks />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route index element={<ManagerDashboard />} />
+          <Route path="pending-tasks" element={<PendingTasks />} />
+        </Route>
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
+
       </Routes>
     </Router>
   );

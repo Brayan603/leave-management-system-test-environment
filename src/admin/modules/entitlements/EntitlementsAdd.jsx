@@ -32,7 +32,7 @@ const EntitlementAdd = () => {
 
  const fetchLeaveTypes = async () => {
   try {
-    const res = await fetch("http://localhost:5000/api/leave/leave", {
+    const res = await fetch("http://localhost:5000/api/leave/types", {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     });

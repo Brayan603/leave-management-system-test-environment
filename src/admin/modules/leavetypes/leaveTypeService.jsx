@@ -1,7 +1,7 @@
 // services/LeaveTypeService.js
 import axios from "axios";
 
-const API_BASE = "http://localhost:5000/api/leave/leave"; // endpoint for leave types
+const API_BASE = "http://localhost:5000/api/leave/types"; // endpoint for leave types
 
 // Get all leave types
 export const getLeaveTypes = async () => {

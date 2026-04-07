@@ -1,28 +1,32 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import ManagerSidebar from "../components/ManagerSidebar";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import "./ManagerLayout.css"; // custom CSS
+import ManagerSidebar from "../components/ManagerSidebar"; // ✅ component import
+import Navbar from "../components/Navbar";                 // ✅ component import
+
+// If you have CSS files, import them correctly
+// Example: if ManagerLayout.css is inside src/manager/styles/
+import "../styles/ManagerLayout.css";
 
 const ManagerLayout = () => {
   return (
     <div className="manager-layout">
-      {/* Top Navbar */}
+      
+      {/* 🔝 Navbar */}
       <Navbar />
 
       <div className="manager-main">
-        {/* Sidebar */}
+        
+        {/* 📌 Sidebar */}
         <ManagerSidebar />
 
-        {/* Main Content */}
+        {/* 📄 Main Content */}
         <div className="manager-content">
+
+          {/* Page Content */}
           <div className="manager-outlet">
-            <Outlet /> {/* 🔥 manager pages render here */}
+            <Outlet />
           </div>
 
-          {/* Footer always at bottom */}
-          <Footer />
         </div>
       </div>
     </div>
@@ -30,3 +34,5 @@ const ManagerLayout = () => {
 };
 
 export default ManagerLayout;
+
+

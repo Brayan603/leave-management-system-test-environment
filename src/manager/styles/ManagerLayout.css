@@ -1,23 +1,45 @@
 .manager-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
 }
 
+/* MAIN BODY */
 .manager-main {
   display: flex;
-  min-height: calc(100vh - 60px); /* account for navbar */
+  flex: 1;
 }
 
+/* CONTENT AREA */
 .manager-content {
-  margin-left: 240px; /* sidebar width */
-  margin-top: 30px;
-  padding: 20px;
-  width: 100%;
+  flex: 1;
   display: flex;
   flex-direction: column;
+  background: #f9fafb;
 }
 
+/* SYSTEM BAR */
+.system-bar {
+  background: #111827;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+/* SIMULATION BADGE */
+.simulation-badge {
+  background: #f59e0b;
+  color: black;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+/* OUTLET */
 .manager-outlet {
   flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }

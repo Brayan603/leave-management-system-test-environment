@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./ManagerSidebar.css";
+import "../styles/ManagerSidebar.css"; // ✅ Import CSS for styling
 
 const ManagerSidebar = () => {
   return (
