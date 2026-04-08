@@ -1,48 +1,71 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const NotificationDropdown = ({ onClose }) => {
+const NotificationDropdown = () => {
   const [notifications, setNotifications] = useState([]);
-  const dropdownRef = useRef();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // ✅ Fetch notifications
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/notifications", {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-        },
-      })
-      .then((res) => setNotifications(res.data))
-      .catch((err) => console.error(err));
-  }, []);
+    const fetchNotifications = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  // ✅ Close when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        if (onClose) onClose(); // ✅ SAFE CHECK
+        const token = sessionStorage.getItem("token");
+
+        const res = await axios.get(
+          "http://localhost:5000/api/notifications",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setNotifications(res.data || []);
+      } catch (err) {
+        console.error("Error fetching notifications:", err);
+        setError("Failed to load notifications");
+      } finally {
+        setLoading(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onClose]);
+    fetchNotifications();
+  }, []);
 
   return (
-    <div className="dropdown" ref={dropdownRef}>
-      <h4>Notifications</h4>
+    <div className="dropdown notification-dropdown">
 
-      {notifications.length === 0 ? (
-        <p>No notifications</p>
-      ) : (
-        notifications.map((n, i) => (
-          <p key={i}>{n.message}</p>
-        ))
+      {/* HEADER */}
+      <div className="dropdown-header">
+        <h4>Notifications</h4>
+      </div>
+
+      <hr />
+
+      {/* LOADING STATE */}
+      {loading && <p className="muted-text">Loading notifications...</p>}
+
+      {/* ERROR STATE */}
+      {error && <p className="error-text">{error}</p>}
+
+      {/* EMPTY STATE */}
+      {!loading && !error && notifications.length === 0 && (
+        <p className="muted-text">No notifications</p>
       )}
+
+      {/* NOTIFICATIONS LIST */}
+      {!loading &&
+        !error &&
+        notifications.length > 0 &&
+        notifications.map((n, i) => (
+          <div key={n.id || i} className="notification-item">
+            <p>{n.message}</p>
+          </div>
+        ))}
     </div>
   );
 };

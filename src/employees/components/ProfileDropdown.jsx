@@ -3,13 +3,23 @@ import { useNavigate } from "react-router-dom";
 
 const ProfileDropdown = ({ user, onClose }) => {
   const navigate = useNavigate();
-  const dropdownRef = useRef();
+  const dropdownRef = useRef(null);
+
+  // ✅ Safe close function
+  const safeClose = () => {
+    if (typeof onClose === "function") {
+      onClose();
+    }
+  };
 
   // ✅ Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        onClose(); // close dropdown
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target)
+      ) {
+        safeClose();
       }
     };
 
@@ -20,10 +30,11 @@ const ProfileDropdown = ({ user, onClose }) => {
     };
   }, [onClose]);
 
-  // ✅ Logout
+  // ✅ Logout handler
   const handleLogout = () => {
     sessionStorage.clear();
     navigate("/login");
+    safeClose(); // optional: close dropdown on logout
   };
 
   return (
@@ -38,8 +49,8 @@ const ProfileDropdown = ({ user, onClose }) => {
         />
 
         <div>
-          <p className="name">{user?.name}</p>
-          <p className="email">{user?.email}</p>
+          <p className="name">{user?.name || "User"}</p>
+          <p className="email">{user?.email || "No email"}</p>
         </div>
       </div>
 
