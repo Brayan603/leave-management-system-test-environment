@@ -6,7 +6,7 @@ import Login from "./auth/Login";
 
 // Admin Pages
 import AdminHome from "./admin/modules/pages/AdminHome";
-
+ 
 // Employee Pages
 import EmployeeDashboard from "./employees/pages/EmployeeDashboard"; 
 import ApplyLeave from "./employees/pages/ApplyLeave";
