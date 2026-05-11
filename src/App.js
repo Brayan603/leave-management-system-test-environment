@@ -39,11 +39,15 @@ import UsersAdd from "./admin/modules/users/UsersAdd";
 import UsersView from "./admin/modules/users/UsersView";
 import EmployeeLayout from "./employees/components/EmployeeLayout";
 
+// ⭐ NEW: User Maintenance imports
+import UserMaintenance from "./admin/modules/pages/UserMaintenance";
+import UserMaintenanceList from "./admin/modules/pages/UserMaintenanceList";
+
 // 🔐 Role Redirects Map (FIXED)
 const roleRedirects = {
   admin: "/admin-home",
   employee: "/employees",
-  manager: "/manager", // ✅ FIXED
+  manager: "/manager",
 };
 
 // 🔐 Protected Route
@@ -57,7 +61,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
   return children;
 };
 
-// Layout for nested Admin routes
+// Layout for nested Admin routes (reused for both entitlements and user maintenance)
 const EntitlementsLayout = () => <Outlet />;
 
 function App() {
@@ -117,6 +121,21 @@ function App() {
           </Route>
         </Route>
 
+        {/* ⭐ NEW: User Maintenance */}
+        <Route
+          path="/admin/user-maintenance/*"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <UserMaintenance />
+            </ProtectedRoute>
+          }
+        >
+          <Route element={<EntitlementsLayout />}>
+            <Route index element={<UserMaintenanceList />} />
+            {/* Future sub-pages can be added here */}
+          </Route>
+        </Route>
+
         {/* ================= EMPLOYEE ================= */}
         <Route
           path="/employees/*"
@@ -134,7 +153,7 @@ function App() {
           <Route path="settings" element={<Settings />} />
         </Route>
 
-        {/* ================= MANAGER (FIXED) ================= */}
+        {/* ================= MANAGER ================= */}
         <Route
           path="/manager/*"
           element={
